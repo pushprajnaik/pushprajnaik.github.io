@@ -15,6 +15,7 @@
 <!-- ************************************ script *********************************** -->
     <script>
     var lat1,long1,coords1,lat,long,coords;
+    var R = 6371; // radius of earth
 
       function start(){
 
@@ -25,8 +26,10 @@
         var c = function(pos){
            lat = pos.coords.latitude,
               long = pos.coords.longitude,
-              coords = lat +','+ long;
+            //  coords = lat +','+ long;
+
               document.getElementById('display').innerHTML = "calculating your displacement ...";
+          //  alert("calculating your displacement ...");
             }
 
 
@@ -42,15 +45,27 @@
               var d = function(pos){
                  lat1 = pos.coords.latitude,
                     long1 = pos.coords.longitude,
-                    coords1 = lat1 +','+ long1;
+                    //coords1 = lat1 +','+ long1;
 
                     document.getElementById('display1').innerHTML = "your displacement is ...";
 
-                    var dis = Math.sqrt((lat1-lat)*(lat1-lat)+(long1-long)*(long1-long));
-
-                       document.getElementById('display2').innerHTML = dis/1000+' km';
+                    //var dis = Math.sqrt((lat1-lat)*(lat1-lat)+(long1-long)*(long1-long));
+                    var dLat = (lat1-lat).toRad();
+                    var dLon = (long1-long).toRad();
+                    var lat1 = lat.toRad();
+                      var lat2 = lat1.toRad();
+                      var a = Math.sin(dLat/2)*Math.sin(dLat/2)+Math.sin(dLon/2)*Math.sin(dLon/2)*Math.cos(lat)*Math.cos(lat1);
+                      var cur = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+                      var dis = R*cur;
+                       document.getElementById('display2').innerHTML = dis +' km';
 
                 }
+                /** Converts numeric degrees to radians */
+                  if (typeof(Number.prototype.toRad) === "undefined") {
+                    Number.prototype.toRad = function() {
+                      return this * Math.PI / 180;
+                    }
+}
 
   </script>
 
@@ -125,7 +140,7 @@
                 <div class="result">
                   <div class="dis">
 
-                    <p id="display"> </p><br>
+                    <p id="display" > </p><br>
                       <p id="display1"> </p><br>
                       <p id="display2"> </p>
 
@@ -267,6 +282,7 @@
       background-image: url("sailimg.png");
 
         position: inherit;
+        background-repeat: round;
 
       /*  background: #EB3349; /* fallback for old browsers */
       /*  background: -webkit-linear-gradient(to left, #EB3349 , #F45C43); /* Chrome 10-25, Safari 5.1-6 */
@@ -395,30 +411,32 @@
       font-size: 25px;
 
     }*/
-  #display{
-  background-color: blue;
+/*  #display #display1 #display2{
+  background-color:#9c81d4;
   text-align: center;
+  font-family: 'Monoton', cursive;
 
-  }
+  }*/
   .dis{
     width: 100%;
     position: relative;
     transform: translate(-50%,-50%);
     top: 43.5%;
     left: 50%;
+  /*  background-color:#9c81d4;*/
+    text-align: center;
+    font-family: 'Monoton', cursive;
 
   }
+  .dis p{font-family :'Monoton', cursive;}
 
-@@media screen and (max-width:360p) {
-  .mail a{
-    text-decoration: none;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 66px;
-    color: black;
-    position:relative;
-    top:36%;
-    left: 17%;
-    transform: translate(-50%,-50%);
-}
+/*  @media screen and (max-width:360p) {
+    .mail a{
+
+      position:relative;
+      top:36%;
+      left: 17%;
+      transform: translate(-50%,-50%);
+  }}*/
   </style>
 </html>
